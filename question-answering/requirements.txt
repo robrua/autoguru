@@ -1,8 +1,0 @@
-gensim
-bottle
-click
-paste
-numpy
-scipy
-Faker
-scikit-learn

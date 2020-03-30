@@ -1,0 +1,12 @@
+flake8
+black
+click
+numpy
+tensorflow
+tensorflow-hub
+hnswlib
+starlette
+uvicorn
+requests
+tabulate
+discord.py
