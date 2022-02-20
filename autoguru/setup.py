@@ -3,16 +3,13 @@ from pathlib import Path
 
 from setuptools import find_packages, setup
 
-install_requires = [
-    "click",
-    "numpy",
-    "pony",
-    "tensorflow",
-    "tensorflow-hub",
-    "scipy",
-    "scikit-learn",
-    "pynndescent",
-]
+install_requires = ["click", "numpy", "pony"]
+
+extras_require = {
+    "tensorflow": ["tensorflow", "tensorflow-hub"],
+    "sklearn": ["scikit-learn", "scipy"],
+    "pynndescent": ["pynndescent"],
+}
 
 version_file = Path(__file__).parent.joinpath("autoguru", "VERSION.txt")
 version = version_file.read_text(encoding="UTF-8").strip()
@@ -33,5 +30,7 @@ setup(
     entry_points={"console_scripts": ["autoguru=autoguru.__main__:autoguru"]},
     zip_safe=True,
     install_requires=install_requires,
+    extras_require=extras_require,
+    python_requires=">=3.7",
     include_package_data=True,
 )
