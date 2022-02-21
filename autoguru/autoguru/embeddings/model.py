@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import Any, Iterable, Union, no_type_check
+from typing import Any, Iterable, List, Union, no_type_check
 
 import numpy as np
+
+from autoguru.nearestneighbors import Metric
 
 
 class Embedder(ABC):
@@ -12,6 +14,11 @@ class Embedder(ABC):
     @property
     @abstractmethod
     def embedding_size(self) -> int:
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def suggested_metrics(self) -> List[Metric]:
         raise NotImplementedError
 
     @no_type_check
