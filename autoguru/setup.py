@@ -3,7 +3,7 @@ from pathlib import Path
 
 from setuptools import find_packages, setup
 
-install_requires = ["click", "numpy", "pony"]
+install_requires = ["click", "numpy", "pony", "nltk"]
 
 extras_require = {
     "tensorflow": ["tensorflow", "tensorflow-hub"],
