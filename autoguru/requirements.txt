@@ -6,6 +6,7 @@ pytest
 click
 numpy
 pony
+nltk
 tensorflow
 tensorflow-hub
 scipy
