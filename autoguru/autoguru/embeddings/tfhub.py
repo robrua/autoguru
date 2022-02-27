@@ -28,11 +28,11 @@ class TfHubEmbedder(Embedder):
 
     def __init__(
         self,
-        model: Callable[[Iterable[str]], np.ndarray],
+        model: Callable[[Iterable[str]], tf.Tensor],
         embedding_size: int,
         suggested_metrics: List[Metric] = None,
     ) -> None:
-        self._model: Callable[[Iterable[str]], np.ndarray] = model
+        self._model: Callable[[Iterable[str]], tf.Tensor] = model
         self._embedding_size: int = embedding_size
         self._suggested_metrics: List[Metric] = (
             suggested_metrics if suggested_metrics is not None else []
@@ -40,9 +40,9 @@ class TfHubEmbedder(Embedder):
 
     def embed(self, text: Union[str, Iterable[str]]) -> np.ndarray:
         if isinstance(text, str):
-            return tf.nn.l2_normalize(self._model([text]), axis=1)[0].numpy()
+            return self._model([text])[0].numpy()
         else:
-            return tf.nn.l2_normalize(self._model(text), axis=1).numpy()
+            return self._model(text).numpy()
 
     @property
     def embedding_size(self) -> int:
