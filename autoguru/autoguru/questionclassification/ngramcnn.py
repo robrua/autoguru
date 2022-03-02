@@ -1,6 +1,6 @@
 from copy import copy
 from pathlib import Path
-from typing import Iterable, List, Type, Union
+from typing import Any, Dict, Iterable, List, Type, Union
 
 import numpy as np
 import tensorflow as tf
@@ -153,9 +153,12 @@ class ConvolutionalNGrams:
         )
 
         self._model.compile(optimizer=optimizer, loss=loss, metrics=metrics)
-        self._model.predict(
+        self._model(
             tf.random.uniform(shape=(1, max(kernel_sizes), embedding_size), dtype=dtype)
         )  # Model.build is broken :(
+
+        self._embedding_size: int = embedding_size
+        self._dtype: tf.Dtype = dtype
         self._classes: List[QuestionClass] = list(
             QuestionClass
         )  # Iteration order is guaranteed
@@ -163,7 +166,7 @@ class ConvolutionalNGrams:
     def classify(
         self, token_embeddings: np.ndarray, k: int = 1
     ) -> List[List[QuestionClassification]]:
-        predictions = self._model.predict(token_embeddings)
+        predictions = self._model(token_embeddings)
         top_k = tf.math.top_k(predictions, k=k)
         return [
             [
@@ -198,7 +201,29 @@ class ConvolutionalNGrams:
         if isinstance(saved_model_path, Path):
             saved_model_path = str(saved_model_path.resolve())
 
-        tf.saved_model.save(self._model, saved_model_path)
+        @tf.function
+        def attributes():
+            return {
+                "classes": tf.convert_to_tensor(
+                    [clazz.name for clazz in self._classes]
+                ),
+                "embedding_size": self._embedding_size,
+                "dtype": self._dtype.name,
+            }
+
+        self._model.attributes = attributes
+        tf.saved_model.save(
+            self._model,
+            saved_model_path,
+            {
+                "call": self._model.call.get_concrete_function(
+                    tf.TensorSpec(
+                        shape=(None, None, self._embedding_size), dtype=self._dtype
+                    )
+                ),
+                "attributes": self._model.attributes.get_concrete_function(),
+            },
+        )
 
     @classmethod
     def load(cls, saved_model_path: Union[str, Path]) -> "ConvolutionalNGrams":
@@ -207,7 +232,17 @@ class ConvolutionalNGrams:
 
         classifier = object.__new__(cls)
         classifier._model = tf.saved_model.load(saved_model_path)
-        classifier._classes = list(QuestionClass)  # Iteration order is guaranteed
+
+        attributes = classifier._model.attributes()
+        classifier._classes = [
+            QuestionClass[clazz.numpy().decode("UTF-8")]
+            for clazz in attributes["classes"]
+        ]
+        classifier._dtype = tf.dtypes.as_dtype(
+            attributes["dtype"].numpy().decode("UTF-8")
+        )
+        classifier._embedding_size = attributes["embedding_size"].numpy().item()
+
         return classifier
 
     @classmethod
