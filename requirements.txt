@@ -12,3 +12,7 @@ tensorflow-hub
 scipy
 scikit-learn
 pynndescent
+fastapi==0.74.1
+uvicorn[standard]
+tortoise-orm[aiosqlite]
+fastapi-admin
