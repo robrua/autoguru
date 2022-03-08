@@ -1,0 +1,12 @@
+flake8
+black
+isort
+mypy
+pytest
+autoguru-persistence
+autoguru-question-answering
+click
+fastapi==0.74.1
+uvicorn[standard]
+fastapi-admin
+tortoise-orm

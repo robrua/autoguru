@@ -1,0 +1,10 @@
+flake8
+black
+isort
+mypy
+pytest
+autoguru-persistence
+autoguru-question-answering
+autoguru-web-services
+autoguru-discord
+click

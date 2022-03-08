@@ -1,0 +1,14 @@
+flake8
+black
+isort
+mypy
+pytest
+autoguru-persistence
+click
+numpy
+nltk
+tensorflow
+tensorflow-hub
+scikit-learn
+scipy
+pynndescent
