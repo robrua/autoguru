@@ -7,7 +7,7 @@ install_requires = [
     "autoguru-persistence",
     "autoguru-question-answering",
     "click",
-    "fastapi==0.74.1",
+    "fastapi==0.109.1",
     "uvicorn[standard]",
     "fastapi-admin",
     "tortoise-orm",
